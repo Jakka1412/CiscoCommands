@@ -1,0 +1,71 @@
+Vlan maken
+Sw1 (config) # vlan ….
+Sw1 (config) # name ….
+Sw1 (config) # interface range fastethernet 0/X-X
+Als het 1 poort moet zijn kan
+Sw1 (config) # interface fastethernet 0/X ook gewoon
+Sw1 (config-if-range) # switchport mode acces
+Sw1 (config-if-range) # switchport acces vlan X
+
+Ww op router / switch en encrypten
+Sw1 (config) # service password-encryption
+
+Trunken
+om te kunnen trunken (verschilde vlans met elkaar verbinden via apparte switch)
+X is de poort die je gebruikt om de ene met de andere switch te verbinden met copper cros over cable
+Sw1 (config) # interface fastethernet 0/X
+Sw1 (config-if) # switchport mode trunk
+Als dit commando niet werk gebruik dan commando
+Sw1 (config-if) # switchport trunk encapsulation dot1q
+Sw1 # show interface trunk
+(speciale vlans taggen)
+Sw1 (config) # interface fastethernet 0/X
+Sw1 (config-if) # switchport mode trunk
+Sw1 (config-if) # switchport trunk allowed
+vlan X
+
+VTP leren configureren
+De switches die verbonden zijn moeten trunk al enabled hebben (Om verschillende switches automatisch veranderingen over te nemen)
+Sw1 (config) # vtp mode ….
+Kan client, off, server, transparent
+Sw1 (config) # vtp domain ….
+Moet jou huidige domain zijn
+Sw1 (config) # vtp password ….
+Sw1 (config) # vtp pruning
+Sw1 (config) # vtp version 2
+Sw1 # show vtp status
+
+Redundantie
+Redundantie zorgt er voor dat als er 2 routers zijn en eentje uitvalt de andere het automatisch overneemt
+
+R1 (config) # interface g0/X
+R1 (config-if) # ip address X.X.X.X Z.Z.Z.Z
+
+Deafault gateway is het ip address van de router (Z.Z.Z.Z is het subnetmask)
+
+R1 (config-if) # standby version 2
+R1 (config-if) # standby 1 ip X.X.X.X
+
+Dit ip is een standby ip dus het moet niet het standaard Deafault gateway ip zijn maar het virtual router ip
+
+R1 (config-if) # standby 1 priority 150
+R1 (config-if) # standby 1 preempt
+R1 (config-if) # no shutdown
+
+En nu configureren van de backup router
+
+R2 (config) # interface g0/X
+R2 (config-if) # ip address X.X.X.X Z.Z.Z.Z
+
+Deafault gateway is het ip address van de 2e router (Z.Z.Z.Z is het subnetmask)
+
+R2 (config-if) # standby version 2
+R2 (config-if) # standby 1 ip X.X.X.X
+
+Dit ip is een standby ip dus het moet niet het standaard Deafault gateway ip zijn maar wel het zelfde als de 1e router
+
+R2 (config-if) # no shutdown
+
+En nu om te kijken of het werkt
+R2 # Show standby
+
